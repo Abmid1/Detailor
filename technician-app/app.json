@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Detailor",
-    "slug": "detailor-customer",
+    "name": "Detailor Technician",
+    "slug": "detailor-technician",
     "version": "1.0.0",
     "scheme": "detailor",
     "orientation": "portrait",
@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.detailor.customer",
+      "bundleIdentifier": "com.detailor.technician",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "We need your location to dispatch your technician.",
         "NSPhotoLibraryUsageDescription": "Allow access to pick your vehicle photos."
@@ -24,7 +24,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0A0A0F"
       },
-      "package": "com.detailor.customer",
+      "package": "com.detailor.technician",
       "permissions": ["ACCESS_FINE_LOCATION", "CAMERA", "READ_EXTERNAL_STORAGE"]
     },
     "plugins": [
