@@ -40,7 +40,6 @@
       ]
     ],
     "extra": {
-      "eas": { "projectId": "YOUR_EAS_PROJECT_ID" },
       "API_URL": "https://detailor-backend.onrender.com"
     }
   }
