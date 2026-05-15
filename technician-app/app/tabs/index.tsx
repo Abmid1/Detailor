@@ -27,7 +27,7 @@ export default function TodayRoute() {
     finally { setRefreshing(false); }
   }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const done  = jobs.filter((j) => j.status === 'completed').length;
   const total = jobs.length;

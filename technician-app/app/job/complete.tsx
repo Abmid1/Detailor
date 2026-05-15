@@ -33,7 +33,7 @@ export default function CompleteScreen() {
       });
       await uploadPhotos(jobId!, 'post_completion', form);
       if (notes) await postNotes(jobId!, notes);
-      router.replace('/(tabs)');
+      router.replace('/tabs');
     } catch (err: any) {
       Alert.alert('Error', err.message);
     } finally {
@@ -70,7 +70,6 @@ export default function CompleteScreen() {
           value={notes}
           onChangeText={setNotes}
           multiline numberOfLines={4}
-          color={Colors.text}
           textAlignVertical="top"
         />
       </ScrollView>
@@ -109,7 +108,7 @@ const s = StyleSheet.create({
   textarea: {
     backgroundColor: Colors.card, borderRadius: Radius.md,
     borderWidth: 1, borderColor: Colors.border,
-    padding: Spacing.md, fontSize: Font.base, minHeight: 100,
+    padding: Spacing.md, fontSize: Font.base, minHeight: 100, color: Colors.text,
   },
   btn: {
     backgroundColor: Colors.primary, borderRadius: Radius.md,

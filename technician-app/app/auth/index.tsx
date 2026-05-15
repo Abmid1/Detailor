@@ -29,7 +29,7 @@ export default function TechSignIn() {
           <TextInput
             style={s.input} placeholder="XX XXX XXXX" placeholderTextColor={Colors.muted}
             keyboardType="phone-pad" value={phone.replace(/\D/g,'')}
-            onChangeText={setPhone} maxLength={10} autoFocus color={Colors.text}
+            onChangeText={setPhone} maxLength={10} autoFocus
           />
         </View>
         <TouchableOpacity style={[s.btn, loading && { opacity: 0.6 }]} onPress={handleSend} disabled={loading}>

@@ -24,7 +24,7 @@ export default function TechOtp() {
     try {
       const { data } = await verifyOtp(phone!, code);
       await setAuth(data.token, data.user);
-      router.replace('/(tabs)');
+      router.replace('/tabs');
     } catch (err: any) {
       Alert.alert('Wrong code', err.message);
       setDigits(Array(6).fill(''));
@@ -42,7 +42,7 @@ export default function TechOtp() {
       <View style={s.row}>
         {digits.map((d, i) => (
           <TextInput
-            key={i} ref={(r) => (inputs.current[i] = r)}
+            key={i} ref={(r) => { inputs.current[i] = r; }}
             style={[s.box, d && s.boxFilled]} value={d}
             onChangeText={(v) => onDigit(v, i)}
             keyboardType="number-pad" maxLength={1} autoFocus={i === 0} selectTextOnFocus

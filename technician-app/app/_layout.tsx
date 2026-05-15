@@ -8,14 +8,14 @@ export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
 
-  useEffect(() => { loadAuth(); }, []);
+  useEffect(() => { loadAuth(); }, [loadAuth]);
 
   useEffect(() => {
     if (!isLoaded) return;
     const inAuth = segments[0] === 'auth';
     if (!token && !inAuth) router.replace('/auth');
-    if (token && inAuth) router.replace('/(tabs)');
-  }, [isLoaded, token]);
+    if (token && inAuth) router.replace('/tabs');
+  }, [isLoaded, token, segments, router]);
 
   if (!isLoaded) return null;
 
@@ -24,7 +24,7 @@ export default function RootLayout() {
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#0A0A0F' } }}>
         <Stack.Screen name="auth" />
-        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="tabs" />
         <Stack.Screen name="job" options={{ animation: 'slide_from_right' }} />
       </Stack>
     </>
