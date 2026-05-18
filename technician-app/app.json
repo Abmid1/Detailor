@@ -3,11 +3,9 @@
     "name": "Detailor Technician",
     "slug": "detailor-technician",
     "version": "1.0.0",
-    "scheme": "detailor",
+    "scheme": "detailortech",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#0A0A0F"
     },
@@ -15,15 +13,12 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.detailor.technician",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "We need your location to dispatch your technician.",
-        "NSPhotoLibraryUsageDescription": "Allow access to pick your vehicle photos."
+        "NSLocationWhenInUseUsageDescription": "We need your location to navigate to jobs.",
+        "NSPhotoLibraryUsageDescription": "Allow access to take inspection photos.",
+        "NSCameraUsageDescription": "Allow camera access to take inspection and after photos."
       }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0A0A0F"
-      },
       "package": "com.detailor.technician",
       "permissions": ["ACCESS_FINE_LOCATION", "CAMERA", "READ_EXTERNAL_STORAGE"]
     },
@@ -32,16 +27,15 @@
       "expo-secure-store",
       [
         "expo-location",
-        { "locationWhenInUsePermission": "We need your location to dispatch your technician." }
+        { "locationWhenInUsePermission": "We need your location to navigate to jobs." }
       ],
       [
         "expo-notifications",
-        { "icon": "./assets/notification-icon.png", "color": "#1DB954" }
+        { "color": "#1DB954" }
       ]
     ],
     "extra": {
-      "eas": { "projectId": "YOUR_EAS_PROJECT_ID" },
-      "API_URL": "https://detailor-backend.onrender.com"
+      "API_URL": "https://detailor-qetw.onrender.com"
     }
   }
 }
