@@ -21,9 +21,10 @@ export default function RootLayout() {
   useEffect(() => {
     if (!isLoaded) return;
     const inAuth = segments[0] === 'auth';
+    const inTabs = segments[0] === 'tabs';
     if (!token && !inAuth) router.replace('/auth');
-    if (token && inAuth) router.replace('/(tabs)');
-  }, [isLoaded, token]);
+    if (token && !inTabs && !segments[0]?.startsWith('booking')) router.replace('/tabs');
+  }, [isLoaded, token, segments]);
 
   // Register push token
   useEffect(() => {
@@ -41,8 +42,9 @@ export default function RootLayout() {
     <>
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#0A0A0F' } }}>
+        <Stack.Screen name="index" />
         <Stack.Screen name="auth" />
-        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="tabs" />
         <Stack.Screen name="booking" options={{ animation: 'slide_from_right' }} />
       </Stack>
     </>
