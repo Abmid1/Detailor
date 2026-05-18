@@ -19,21 +19,27 @@ async function sendOtp(phone) {
     [phone, code, expiresAt]
   );
 
-  if (process.env.NODE_ENV === 'development') {
+  // No SMS key set yet → fall back to logging the code (use for testing)
+  if (!process.env.SMS_API_KEY) {
     console.log(`[OTP] ${phone} → ${code}`);
     return { sent: true, dev_code: code };
   }
 
   // Arkesel SMS gateway (popular in Ghana)
-  await axios.get('https://sms.arkesel.com/sms/api', {
-    params: {
-      action: 'send-sms',
-      api_key: process.env.SMS_API_KEY,
-      to: phone,
-      from: process.env.SMS_SENDER_ID || 'Detailor',
-      sms: `Your Detailor code is ${code}. Valid for ${OTP_TTL_MINUTES} minutes.`,
-    },
-  });
+  try {
+    await axios.get('https://sms.arkesel.com/sms/api', {
+      params: {
+        action: 'send-sms',
+        api_key: process.env.SMS_API_KEY,
+        to: phone,
+        from: process.env.SMS_SENDER_ID || 'Detailor',
+        sms: `Your Detailor code is ${code}. Valid for ${OTP_TTL_MINUTES} minutes.`,
+      },
+    });
+  } catch (err) {
+    console.error('[SMS] Send failed, logging code instead:', err.message);
+    console.log(`[OTP] ${phone} → ${code}`);
+  }
 
   return { sent: true };
 }
