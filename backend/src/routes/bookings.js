@@ -82,8 +82,13 @@ router.post('/', async (req, res, next) => {
       bundle.price_ghs, customer_notes, is_subscription ?? false,
     ]);
 
-    // Auto-assign tech
-    const tech = await assignTechnician(job.id);
+    // Auto-assign tech (best effort — don't fail booking if no techs / SQL issue)
+    let tech = null;
+    try {
+      tech = await assignTechnician(job.id);
+    } catch (err) {
+      console.error('[Booking] assignTechnician failed:', err.message);
+    }
 
     // Trigger MoMo payment request
     const momoRef = await requestPayment({
@@ -93,15 +98,23 @@ router.post('/', async (req, res, next) => {
       description: `Detailor ${bundle.name}`,
     }).catch(() => null);
 
-    // Notify customer
-    await notifyJobConfirmed(req.user, {
-      ...job,
-      scheduled_at_formatted: new Date(job.scheduled_at).toLocaleString('en-GH'),
-    });
+    // Notify customer (best effort)
+    try {
+      await notifyJobConfirmed(req.user, {
+        ...job,
+        scheduled_at_formatted: new Date(job.scheduled_at).toLocaleString('en-GH'),
+      });
+    } catch (err) {
+      console.error('[Booking] notifyJobConfirmed failed:', err.message);
+    }
 
-    // Notify assigned tech
+    // Notify assigned tech (best effort)
     if (tech) {
-      await notifyTechNewJob(tech, { ...job, location_address });
+      try {
+        await notifyTechNewJob(tech, { ...job, location_address });
+      } catch (err) {
+        console.error('[Booking] notifyTechNewJob failed:', err.message);
+      }
     }
 
     res.status(201).json({ booking: job, momo_reference: momoRef });
