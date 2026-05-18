@@ -18,6 +18,31 @@ const STATUS_MSG: Record<string, string> = {
   cancelled:   'This booking was cancelled',
 };
 
+function TimelineStep({ label, done, active, isLast }: { label: string; done: boolean; active: boolean; isLast?: boolean }) {
+  const color = done ? Colors.primary : active ? Colors.accent : Colors.border;
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+      <View style={{ alignItems: 'center', marginRight: 12 }}>
+        <View style={{
+          width: 18, height: 18, borderRadius: 9,
+          backgroundColor: done ? Colors.primary : active ? Colors.accent : 'transparent',
+          borderWidth: 2, borderColor: color,
+          alignItems: 'center', justifyContent: 'center',
+        }}>
+          {done && <Ionicons name="checkmark" size={12} color={Colors.bg} />}
+        </View>
+        {!isLast && <View style={{ width: 2, height: 24, backgroundColor: done ? Colors.primary : Colors.border, marginTop: 2 }} />}
+      </View>
+      <Text style={{
+        fontSize: Font.sm,
+        color: done ? Colors.text : active ? Colors.text : Colors.muted,
+        fontWeight: active || done ? '600' : '400',
+        marginTop: 1, paddingBottom: isLast ? 0 : 14,
+      }}>{label}</Text>
+    </View>
+  );
+}
+
 export default function TrackingScreen() {
   const { jobId, momoRef } = useLocalSearchParams<{ jobId: string; momoRef?: string }>();
   const [job, setJob] = useState<Job | null>(null);
@@ -57,7 +82,7 @@ export default function TrackingScreen() {
 
   return (
     <View style={s.container}>
-      <TouchableOpacity style={s.back} onPress={() => router.push('/(tabs)/bookings')}>
+      <TouchableOpacity style={s.back} onPress={() => router.push('/tabs/bookings')}>
         <Ionicons name="arrow-back" color={Colors.primary} size={24} />
       </TouchableOpacity>
 
@@ -92,6 +117,64 @@ export default function TrackingScreen() {
             <Text style={[s.payText, payStatus === 'successful' && { color: Colors.primary }]}>
               Payment {payStatus === 'successful' ? 'confirmed' : 'pending approval…'}
             </Text>
+          </View>
+        )}
+
+        {/* Booking summary — always shown */}
+        <View style={s.summaryCard}>
+          <Text style={s.summaryHeader}>Booking summary</Text>
+          <View style={s.summaryRow}>
+            <Text style={s.summaryLabel}>Service</Text>
+            <Text style={s.summaryVal}>{job.bundle_name ?? '—'}</Text>
+          </View>
+          <View style={s.summaryRow}>
+            <Text style={s.summaryLabel}>Vehicle</Text>
+            <Text style={s.summaryVal}>{[job.vehicle_make, job.vehicle_model].filter(Boolean).join(' ') || '—'}</Text>
+          </View>
+          <View style={s.summaryRow}>
+            <Text style={s.summaryLabel}>When</Text>
+            <Text style={s.summaryVal}>{new Date(job.scheduled_at).toLocaleString('en-GH', { dateStyle: 'medium', timeStyle: 'short' })}</Text>
+          </View>
+          <View style={s.summaryRow}>
+            <Text style={s.summaryLabel}>Location</Text>
+            <Text style={s.summaryVal} numberOfLines={2}>{job.location_address ?? `${job.location_lat?.toFixed(4)}, ${job.location_lng?.toFixed(4)}`}</Text>
+          </View>
+          <View style={[s.summaryRow, { borderBottomWidth: 0 }]}>
+            <Text style={s.summaryLabel}>Total</Text>
+            <Text style={[s.summaryVal, { color: Colors.primary, fontWeight: '800' }]}>GH₵{Number(job.total_amount_ghs).toFixed(2)}</Text>
+          </View>
+        </View>
+
+        {/* Timeline — what happens next */}
+        {job.status !== 'completed' && job.status !== 'cancelled' && (
+          <View style={s.timelineCard}>
+            <Text style={s.summaryHeader}>What happens next</Text>
+            <TimelineStep
+              label="Tech assigned"
+              done={['confirmed','en_route','arrived','in_progress','completed'].includes(job.status)}
+              active={job.status === 'pending'}
+            />
+            <TimelineStep
+              label="Tech on the way"
+              done={['en_route','arrived','in_progress','completed'].includes(job.status)}
+              active={job.status === 'confirmed'}
+            />
+            <TimelineStep
+              label="Tech arrived"
+              done={['arrived','in_progress','completed'].includes(job.status)}
+              active={job.status === 'en_route'}
+            />
+            <TimelineStep
+              label="Detailing in progress"
+              done={['in_progress','completed'].includes(job.status)}
+              active={job.status === 'arrived'}
+            />
+            <TimelineStep
+              label="Job complete"
+              done={job.status === 'completed'}
+              active={job.status === 'in_progress'}
+              isLast
+            />
           </View>
         )}
 
@@ -149,4 +232,25 @@ const s = StyleSheet.create({
   ratingLabel: { fontSize: Font.lg, color: Colors.text, marginBottom: Spacing.md, fontWeight: '700' },
   stars: { flexDirection: 'row', gap: Spacing.sm },
   thanks: { color: Colors.primary, fontSize: Font.base, textAlign: 'center', marginTop: Spacing.lg },
+  summaryCard: {
+    backgroundColor: Colors.card, borderRadius: Radius.lg,
+    borderWidth: 1, borderColor: Colors.border,
+    padding: Spacing.md, marginBottom: Spacing.md,
+  },
+  summaryHeader: {
+    fontSize: Font.sm, color: Colors.muted, marginBottom: Spacing.sm,
+    textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: '600',
+  },
+  summaryRow: {
+    flexDirection: 'row', justifyContent: 'space-between',
+    paddingVertical: Spacing.sm,
+    borderBottomWidth: 1, borderColor: Colors.border,
+  },
+  summaryLabel: { fontSize: Font.sm, color: Colors.muted, flex: 1 },
+  summaryVal: { fontSize: Font.sm, color: Colors.text, flex: 2, textAlign: 'right', fontWeight: '600' },
+  timelineCard: {
+    backgroundColor: Colors.card, borderRadius: Radius.lg,
+    borderWidth: 1, borderColor: Colors.border,
+    padding: Spacing.md, marginBottom: Spacing.md,
+  },
 });
