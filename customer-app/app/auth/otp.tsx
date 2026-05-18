@@ -48,7 +48,7 @@ export default function OtpScreen() {
       if (!data.user.name) {
         router.replace('/auth/setup');
       } else {
-        router.replace('/(tabs)');
+        router.replace('/tabs');
       }
     } catch (err: any) {
       Alert.alert('Wrong code', err.message);

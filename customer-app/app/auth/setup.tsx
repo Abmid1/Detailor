@@ -27,7 +27,7 @@ export default function SetupScreen() {
       await createVehicle({ make, model, color, plate, is_default: true });
       // Refresh stored user with updated name
       await setAuth(await import('expo-secure-store').then(s => s.getItemAsync('auth_token')) as string, meData.user);
-      router.replace('/(tabs)');
+      router.replace('/tabs');
     } catch (err: any) {
       Alert.alert('Error', err.message);
     } finally {
