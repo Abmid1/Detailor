@@ -17,6 +17,45 @@ router.get('/route', requireRole('technician'), async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// GET /jobs/available — unassigned jobs that technicians can accept
+router.get('/available', requireRole('technician'), async (req, res, next) => {
+  try {
+    const { rows } = await query(`
+      SELECT j.*,
+        u.name AS customer_name,
+        v.make, v.model, v.color, v.plate,
+        sb.name AS bundle_name, sb.duration_minutes, sb.includes
+      FROM jobs j
+      JOIN users u ON u.id = j.customer_id
+      JOIN vehicles v ON v.id = j.vehicle_id
+      JOIN service_bundles sb ON sb.id = j.bundle_id
+      WHERE j.technician_id IS NULL
+        AND j.status = 'pending'
+        AND j.scheduled_at > NOW() - INTERVAL '1 hour'
+      ORDER BY j.scheduled_at ASC
+      LIMIT 50
+    `);
+    res.json({ jobs: rows });
+  } catch (err) { next(err); }
+});
+
+// POST /jobs/:id/accept — technician claims an unassigned job
+router.post('/:id/accept', requireRole('technician'), async (req, res, next) => {
+  try {
+    const { rows } = await query(`
+      UPDATE jobs
+      SET technician_id = $1, status = 'confirmed'
+      WHERE id = $2 AND technician_id IS NULL AND status = 'pending'
+      RETURNING *
+    `, [req.user.id, req.params.id]);
+
+    if (!rows[0]) {
+      return res.status(409).json({ error: 'Job already taken or no longer available' });
+    }
+    res.json({ job: rows[0] });
+  } catch (err) { next(err); }
+});
+
 // GET /jobs/:id — technician fetches single job detail
 router.get('/:id', requireRole('technician', 'admin'), async (req, res, next) => {
   try {

@@ -14,6 +14,10 @@ export default function TechTabsLayout() {
         title: "Today's Jobs",
         tabBarIcon: ({ color, size }) => <Ionicons name="map-outline" color={color} size={size} />,
       }} />
+      <Tabs.Screen name="available" options={{
+        title: 'Available',
+        tabBarIcon: ({ color, size }) => <Ionicons name="briefcase-outline" color={color} size={size} />,
+      }} />
       <Tabs.Screen name="profile" options={{
         title: 'Profile',
         tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" color={color} size={size} />,

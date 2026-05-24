@@ -23,6 +23,8 @@ export const verifyOtp = (phone: string, code: string) =>
 export const updateMe = (data: Partial<User>) => api.patch<{ user: User }>('/auth/me', data);
 
 export const getTodayRoute = () => api.get<{ jobs: TechJob[] }>('/jobs/route');
+export const getAvailableJobs = () => api.get<{ jobs: TechJob[] }>('/jobs/available');
+export const acceptJob = (id: string) => api.post<{ job: TechJob }>(`/jobs/${id}/accept`);
 export const getJob        = (id: string) => api.get<{ job: TechJob; photos: Photo[] }>(`/jobs/${id}`);
 export const updateStatus  = (id: string, status: string, extras?: object) =>
   api.patch(`/jobs/${id}/status`, { status, ...extras });
